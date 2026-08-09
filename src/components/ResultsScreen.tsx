@@ -29,6 +29,7 @@ import {
 import confetti from 'canvas-confetti';
 import { ANCHORS } from '../data/careerAnchorData';
 import { AnchorCode, AssessmentResult, AICareerReport } from '../types';
+import { PdfReportLayout } from './PdfReportLayout';
 
 interface ResultsScreenProps {
   result: AssessmentResult;
@@ -50,6 +51,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const reportRef = useRef<HTMLDivElement>(null);
+  const pdfReportRef = useRef<HTMLDivElement>(null);
 
   const topAnchorCodes = result.topAnchors;
   const primaryAnchorCode = topAnchorCodes[0] || 'TF';
@@ -93,11 +95,11 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
 
   // Handle PDF Export using html2canvas-pro (native oklch / oklab support)
   const handlePrintPDF = async () => {
-    if (!reportRef.current || isExportingPDF) return;
+    const element = pdfReportRef.current || reportRef.current;
+    if (!element || isExportingPDF) return;
 
     try {
       setIsExportingPDF(true);
-      const element = reportRef.current;
 
       const canvas = await html2canvas(element, {
         scale: 2,
@@ -105,7 +107,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         allowTaint: true,
         logging: false,
         backgroundColor: '#ffffff',
-        windowWidth: 1200,
+        windowWidth: 794,
         onclone: (clonedDoc) => {
           // Ensure SVG elements have explicit width & height for Recharts rendering
           const svgs = clonedDoc.querySelectorAll('svg');
@@ -494,6 +496,26 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           <span>{toastMessage}</span>
         </div>
       )}
+
+      {/* Hidden PDF Template Container (Fixed 794px A4 Width) */}
+      <div
+        style={{
+          position: 'absolute',
+          left: '-9999px',
+          top: '-9999px',
+          width: '794px',
+          overflow: 'hidden',
+          zIndex: -9999,
+          pointerEvents: 'none',
+        }}
+      >
+        <PdfReportLayout
+          ref={pdfReportRef}
+          result={result}
+          aiReport={aiReport}
+          chartData={chartData}
+        />
+      </div>
     </main>
   );
 };
