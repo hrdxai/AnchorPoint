@@ -1,0 +1,6 @@
+{
+  "name": "Anchor Point - 커리어 앵커 진단",
+  "description": "에드가 샤인(Edgar Schein) 교수의 이론을 바탕으로 한 40문항 커리어 앵커 직업가치관 진단 및 AI 맞춤형 커리어 리포트",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
